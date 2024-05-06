@@ -12,7 +12,17 @@ body {
   padding: 0;
 }
 
-.square, .mask {
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  background-color: #666;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.square, .mask, .flag {
   float: left;
   font-size: 24px;
   font-weight: bold;
@@ -21,6 +31,7 @@ body {
   padding: 0;
   text-align: center;
   width: 34px;
+  color: rgba(0, 0, 0, 0);
 }
 
 .square {
@@ -31,9 +42,9 @@ body {
   background: #ccc;
 }
 
-.mask.flag {
-  color: rgba(0, 0, 0, 0);
-  background-image: url('../icons/flag.png');
+.flag {
+  background: #ccc;
+  background-image: url('../src/icons/flag.png');
   background-size: cover;
   background-repeat: no-repeat; 
 }
@@ -53,7 +64,7 @@ body {
 .square.bomb{
   background: #ccc;
   color: rgba(0, 0, 0, 0);
-  background-image: url('../icons/bomb.png');
+  background-image: url('../src/icons/bomb.png');
   background-size: cover;
   background-repeat: no-repeat; 
 }
