@@ -10,6 +10,27 @@ body {
   font-family: sans-serif;
   margin: 20px;
   padding: 0;
+  background-color: #000;
+  color: white;
+}
+
+.game-area{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-wrapper{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.restart{
+  margin: 10px;
+  padding: 5px;
 }
 
 .menu {

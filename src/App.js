@@ -123,7 +123,7 @@ function Board({squares, setSquares, diff, setStartTimer, setFlagCount}){
     const {rows, cols} = size;
 
     const [clickedSquares, setClickedSquares] = useState([...Array(rows)].map(e => Array(cols).fill(0)));
-    const [gameOver, setGameOver] = useState(false);
+    const [gameOver, setGameOver] = useState(0);
 
     if(countClickedSquares() === 1){
         const nextClickedSquares = [...Array(rows)].map(e => Array(cols).fill(0));
@@ -181,12 +181,10 @@ function Board({squares, setSquares, diff, setStartTimer, setFlagCount}){
                 }
             }
             setStartTimer(false);
-            setGameOver(true);
-            console.log('You Lose!')
+            setGameOver(1);
         }else if(countClickedSquares() === rows * cols - bombs){
             setStartTimer(false);
-            setGameOver(true);
-            console.log("You Win!")
+            setGameOver(2);
         }
     }
 
@@ -206,7 +204,7 @@ function Board({squares, setSquares, diff, setStartTimer, setFlagCount}){
 
     function handleMouseDown(x, y, e){
         e.preventDefault();
-        if(!gameOver){
+        if(gameOver === 0){
             const nextClickedSquares = clickedSquares.slice();
 
             switch(e.button){
@@ -286,14 +284,18 @@ function Board({squares, setSquares, diff, setStartTimer, setFlagCount}){
     }
 
     return (
-        <>
+        <div className='game-wrapper'>
             {renderBoard()}
-        </>
+            <p className='game-over-message' style={{fontWeight: 'bold'}}>
+                {gameOver === 0 ? "" :
+                gameOver === 1 ? "Game Over! You Lose LMAOOOO" :
+                "Game Over! You Win!"}
+            </p>
+        </div>
     );
 }
 
-function Game({diff, setStartTimer, setFlagCount}){
-    const [squares, setSquares] = useState([...Array(difficulties[diff].size.rows)].map(e => Array(difficulties[diff].size.cols).fill(null)));
+function Game({diff, setStartTimer, setFlagCount, squares, setSquares}){
     
     return (
         <div className="game">
@@ -304,7 +306,7 @@ function Game({diff, setStartTimer, setFlagCount}){
     );
 }
 
-function Menu({diff, setDiff, startTimer, flagCount}){
+function Menu({diff, startTimer, flagCount, setSquares}){
     const [time, setTime] = useState(0);
 
     useEffect(() => {
@@ -320,16 +322,27 @@ function Menu({diff, setDiff, startTimer, flagCount}){
     const menuWidth = `${34 * difficulties[diff].size.cols + .3}px`;
 
     const handleDifficultyChange = (e) => {
-
-        // TODO:
-        // Difficulty changes
-        // End Game Screen
-        setDiff(0);
+        let newDiff;
+        switch(e.target.value){
+            case "Easy":
+                newDiff = 0;
+                break;
+            case "Medium":
+                newDiff = 1;
+                break;
+            case "Hard":
+                newDiff = 2;
+                break;
+            default:
+                console.log("Unknown option chosen");
+        }
+        localStorage.setItem('difficulty', newDiff);
+        window.location.reload(); 
     };
 
     return (
         <div className="menu" style={{width: menuWidth}}>
-            <select value={difficulties[diff].key} onChange={handleDifficultyChange}>
+            <select value={difficulties[diff].key} onChange={handleDifficultyChange} style={{marginRight: '10px'}}>
                     {difficulties.map(difficulty => (
                         <option key={difficulty.key} value={difficulty.key}>{difficulty.key}</option>
                     ))}
@@ -346,17 +359,26 @@ function Menu({diff, setDiff, startTimer, flagCount}){
             </div>
         </div>
     );
-};
+}
 
 function Main(){
-    const [diff, setDiff] = useState(1);
+    const storedDiff = localStorage.getItem('difficulty');
+    const initialDiff = storedDiff !== null ? parseInt(storedDiff) : 0;
+
+    const diff = initialDiff;
     const [startTimer, setStartTimer] = useState(false);
     const [flagCount, setFlagCount] = useState(difficulties[diff].bombs);
+    const [squares, setSquares] = useState([...Array(difficulties[diff].size.rows)].map(e => Array(difficulties[diff].size.cols).fill(null)));
 
+    const onRestart = () => {
+        window.location.reload();
+    }
+    
     return (
-        <div>
-            <Menu diff={diff} setDiff={setDiff} startTimer={startTimer} flagCount={flagCount}/>
-            <Game diff={diff} setStartTimer={setStartTimer} setFlagCount={setFlagCount}/>
+        <div className='game-area'>
+            <Menu diff={diff} startTimer={startTimer} flagCount={flagCount} setSquares={setSquares}/>
+            <Game diff={diff} setStartTimer={setStartTimer} setFlagCount={setFlagCount} squares={squares} setSquares={setSquares}/>
+            <button className='restart' onClick={onRestart}>Restart</button>            
         </div>
     );
 }
